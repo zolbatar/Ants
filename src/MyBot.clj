@@ -8,12 +8,13 @@
 
 (defn random-direction [ant]
   (let [directions (filter #(valid-move? ant %) directions)
-        directions-count (count directions)
-        dir-index (. random nextInt directions-count)]
-    (let [dir (nth directions dir-index)]
-      (when dir
-        (.println *err* (str "Random: " dir))
-        (move ant dir)))))
+        directions-count (count directions)]
+    (when (> directions-count 0)
+      (let [dir-index (. random nextInt directions-count)
+            dir (nth directions dir-index)]
+        (when dir
+          (.println *err* (str "Random: " dir))
+          (move ant dir))))))
 
 (defn next-dir [dir]
   (cond
