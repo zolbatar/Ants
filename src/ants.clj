@@ -155,7 +155,6 @@
   []
   (:food *game-state*))
 
-
 (defn unit-distance 
   "Get the vector distance between two points on a torus. Negative deltas are 
   preserved."
@@ -197,7 +196,6 @@
   return the location that the ant would then be in."
   [ant dir]
   (passable? (move-ant ant dir)))
-
 
 (defn direction [loc loc2]
   "Determine the directions needed to move to reach a specific location.
