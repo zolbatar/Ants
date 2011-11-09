@@ -3,5 +3,4 @@
 	"python sample_bots/python/HunterBot.py" \
 	"python sample_bots/python/LeftyBot.py" \
 	"python sample_bots/python/HunterBot.py" \
-	"clj ../src/MyBot.clj" |
-java -jar visualizer.jar
+	"clj ../src/MyBot.clj" | java -jar visualizer.jar

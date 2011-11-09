@@ -11,22 +11,19 @@
       (move ant dir))))
 
 (defn bot-food-gatherer [ant]
-  (let [df (sort-by second (map #(list % (distance ant %)) (food)))]
-    (doseq [x df]
-      (.println *err* x))))
+  (let [food-distance (sort-by second (map #(list % (distance ant %)) (food)))
+        closest-food (first (first food-distance))]
 
-;  (doseq [f (food)]
-;    (.println *err* f)
-
-    ;; How close are we to food?
-;    (when (< 5 (distance ant f))
- ;     (doseq [dir (direction ant f)]
- ;       (when (valid-move? ant dir)
-  ;        (move ant dir))))))
+    ;; Any visible food?
+    (when-not (nil? closest-food)
+      (let [directions (direction ant closest-food)
+            dir (first (filter #(valid-move? ant %) directions))]
+        (when dir
+          (.println *err* (str ant " " dir " " closest-food))
+          (move ant dir))))))
 
 (defn ant-loop []
   (doseq [ant (my-ants)]
-    (.println *err* ant)
     (bot-food-gatherer ant)))
       
 (when-not *compile-files*
