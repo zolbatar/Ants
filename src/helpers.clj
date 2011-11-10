@@ -34,23 +34,26 @@
        score
 
      (> score 20)
-       500
+       score
 
      :else
      (do
        (let [moves (all-moves loc loc2)
              distances (shortest-distances loc2 moves)]
          (if (= (count distances) 0)
-           (+ score 100)
+           (+ score 20)
            (do
            (recur (inc score) (first (first (first distances)))))))))))
           
 (defn measure-distance [ant type]
   (let [distances (sort-by second (map #(list % (score-point-to-point ant %)) type))
         closest (first (first distances))]
-;    (doseq [d distances]
-;      (.println *err* d))
-    closest))
+    (if (nil? closest)
+      nil
+      (do
+        (if (< (second closest) 15)
+          closest
+          nil)))))
 
 (defn random-direction [ant]
   (let [directions (filter #(valid-move? ant %) directions)
