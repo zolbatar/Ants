@@ -1,6 +1,5 @@
 (ns ants
-  (:require [clojure.string :as string]))
-            
+  (:require [clojure.string :as string]))            
 
 ;; Math
 (def ^{:private true} minus (first [-' -]))
@@ -24,7 +23,8 @@
                  :enemies #{}
                  :ants #{}
                  :food #{}
-                 :hill #{}})
+                 :hills #{}
+                 :enemy-hills #{}})
 
 (def dir-sym {:north "N"
               :south "S"
@@ -162,6 +162,16 @@
   "Get a set of all enemy ants where an enemy ant is [row col player-num]"
   []
   (:enemies *game-state*))
+
+(defn hills 
+  "Get a set of all enemy ants where an enemy ant is [row col player-num]"
+  []
+  (:hills *game-state*))
+
+(defn enemy-hills
+  "Get a set of all enemy ants where an enemy ant is [row col player-num]"
+  []
+  (:enemy-hills *game-state*))
 
 (defn food 
   "Get a set of food locations"

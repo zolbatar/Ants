@@ -47,22 +47,12 @@
           
 (defn measure-distance [ant type]
   (let [distances (sort-by second (map #(list % (score-point-to-point ant %)) type))
-        closest (first (first distances))]
+        closest (first (first distances))]    
     (if (nil? closest)
       nil
       (do
         (if (< (second closest) 15)
           closest
           nil)))))
-
-(defn random-direction [ant]
-  (let [directions (filter #(valid-move? ant %) directions)
-        directions-count (count directions)]
-    (when (> directions-count 0)
-      (let [dir-index (. random nextInt directions-count)
-            dir (nth directions dir-index)]
-        (when dir
-          (.println *err* (str "Random: " dir))
-          (move ant dir))))))
 
 
