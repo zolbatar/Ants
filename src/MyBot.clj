@@ -49,24 +49,24 @@
     (when-not (nil? closest-food)
       (let [food-return (bot-search ant closest-food "Food")]
         (when-not (nil? food-return)
-          (swap! done 1)
+          (reset! done 1)
           food-return)))
 
     ;; Any visible enemy?
-    (when-not done
+    (when-not (= done 0)
       (when-not (nil? closest-enemy)
         (let [enemy-return (bot-search ant closest-enemy "Enemy")]
           (when-not (nil? enemy-return)
-            (swap! done 1)
+            (reset! done 1)
             enemy-return))))
                 
     ;; Less than 5 spaces from our hill, move randomly
-    (when-not done
-      (do
-        (.println *err* "teete")
-        (if (< 5 (distance ant (first (hills))))
-          (random-direction ant)
-          ant)))))      
+    (when-not (= done 0)
+        (if (< (distance ant (first (hills))) 5.0)
+          (do
+            (.println *err* "Run away from hill")
+            (random-direction ant))
+          ant))))
                                  
 (defn ant-loop []
   ; Clear current positions
@@ -74,9 +74,9 @@
    (ref-set moved-to ()))
 
   ; Save current ant positions
-;  (dosync
-;   (doseq [ant (my-ants)]
-;     (alter moved-to conj ant)))
+  (dosync
+   (doseq [ant (my-ants)]
+     (alter moved-to conj ant)))
   
   ; Run each ant
   (doseq [ant (my-ants)]
