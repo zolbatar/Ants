@@ -16,12 +16,19 @@
           (.println *err* (str "Random: " dir))
           (move ant dir))))))
 
-(defn next-dir [dir]
+(defn rotate-clockwise [dir]
   (cond
    (= dir :north) :east
    (= dir :east) :south
    (= dir :south) :west
    (= dir :west) :north))
+
+(defn rotate-anticlockwise [dir]
+  (cond
+   (= dir :north) :west
+   (= dir :east) :north
+   (= dir :south) :east
+   (= dir :west) :south))
 
 (defn follow-wall [ant dir]
 ;  (loop
@@ -33,9 +40,16 @@
 (defn follow-continue [ant]
   (.println *err* (str "Continue follow wall: ")))
 
+;(defn score-point-to-point [loc1 loc2]
+;  (let [score (atom 0)]
+;    (loop [
+
+(defn measure-distance [ant type]
+  (let [distances (sort-by second (map #(list % (score-point-to-point ant %)) type))
+        closest (first (first distances))]
+
 (defn bot-food-gatherer [ant]
-  (let [food-distance (sort-by second (map #(list % (distance ant %)) (food)))
-        closest-food (first (first food-distance))]
+  (let [closest-food (measure-distance ant (food))]
 
     (cond
      
