@@ -1,5 +1,15 @@
 (ns ants
   (:require [clojure.string :as string]))
+            
+
+;; Math
+(def ^{:private true} minus (first [-' -]))
+(defn abs "(abs n) is the absolute value of n" [n]
+  (cond
+   (not (number? n)) (throw (IllegalArgumentException.
+                             "abs requires a number"))
+   (neg? n) (minus n)
+   :else n))
 
 ;;****************************************************************
 ;; Constants and lookups
@@ -59,7 +69,6 @@
 (defn- message? [msg-type msg]
   (re-seq (messages msg-type) (string/lower-case msg)))
 
-
 (defn- build-game-info []
   (loop [cur (read-line)
          info {}]
@@ -82,7 +91,11 @@
                  (update-in state [:ants] conj loc) 
                  (update-in state [:enemies] conj ant))
           :food (update-in state [:food] conj loc)
-          :hill (update-in state [:hill] conj loc))))
+;          :hill (update-in state [:hill] conj loc))))
+          :hill (if (zero? player)
+                  (update-in state [:hills] conj loc)
+                  (update-in state [:enemy-hills] conj loc)))))
+
 
 (defn- update-state [state msg]
   (cond
@@ -160,7 +173,7 @@
   preserved."
   [loc loc2]
   (let [[dx dy] (map - loc2 loc)
-        [adx ady] (map #(Math/abs %) [dx dy])
+        [adx ady] (map #(abs %) [dx dy])
         [adx2 ady2] (map #(- (game-info %) %2) [:rows :cols] [adx ady])
         fx (if (<= adx adx2)
              dx
@@ -184,11 +197,25 @@
              (not (contains-ant? (enemy-ants) loc)))
     loc))
 
+(defn unoccupied-food? 
+  "If the given location does not contain an ant or food, return loc"
+  [loc]
+  (when (and (not (contains-ant? (my-ants) loc))
+             (not (contains-ant? (enemy-ants) loc)))
+    loc))
+
 (defn passable? 
   "Deteremine if the given location can be moved to. If so, loc is returned."
   [loc]
   (when (and (not (contains? (*game-state* :water) loc))
              (unoccupied? loc))
+    loc))
+
+(defn passable-food? 
+  "Deteremine if the given location can be moved to. If so, loc is returned."
+  [loc]
+  (when (and (not (contains? (*game-state* :water) loc))
+             (unoccupied-food? loc))
     loc))
 
 (defn valid-move? 
@@ -197,16 +224,22 @@
   [ant dir]
   (passable? (move-ant ant dir)))
 
+(defn valid-move-food? 
+  "Check if moving an ant in the given direction is passable. If so,
+  return the location that the ant would then be in."
+  [ant dir]
+  (passable-food? (move-ant ant dir)))
+
 (defn direction [loc loc2]
   "Determine the directions needed to move to reach a specific location.
   This does not attempt to avoid water. The result will be a collection
   containing up to two directions."
   (let [[dr dc] (unit-distance loc loc2)
         row (if-not (zero? dr)
-            (/ dr (Math/abs dr))
+            (/ dr (abs dr))
             dr)
         col (if-not (zero? dc)
-            (/ dc (Math/abs dc))
+            (/ dc (abs dc))
             dc)]
     (filter #(not (nil? %))
             [(offset-dir [row 0])
