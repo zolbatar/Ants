@@ -164,12 +164,12 @@
   (:enemies *game-state*))
 
 (defn hills 
-  "Get a set of all enemy ants where an enemy ant is [row col player-num]"
+  "Get a set of all my hills [row col player-num]"
   []
   (:hills *game-state*))
 
 (defn enemy-hills
-  "Get a set of all enemy ants where an enemy ant is [row col player-num]"
+  "Get a set of all the enemy hills [row col player-num]"
   []
   (:enemy-hills *game-state*))
 
@@ -208,7 +208,7 @@
     loc))
 
 (defn unoccupied-food? 
-  "If the given location does not contain an ant or food, return loc"
+  "If the given location does not contain an ant, return loc"
   [loc]
   (when (and (not (contains-ant? (my-ants) loc))
              (not (contains-ant? (enemy-ants) loc)))
