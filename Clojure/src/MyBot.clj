@@ -41,6 +41,7 @@
       nil)))
  
 (defn bot-food-gatherer [ant]
+  (.println *err* (str "Process ant: " ant))
   (let [closest-food (measure-distance ant (food))
         closest-enemy (measure-distance ant (enemy-ants))
         done (atom 0)]
@@ -70,12 +71,14 @@
                                  
 (defn ant-loop []
   ; Clear current positions
+  (.println *err* "Clear cache")
   (dosync
    (ref-set moved-to ()))
 
   ; Save current ant positions
-  (dosync
-   (doseq [ant (my-ants)]
+  (.println *err* "Save any positions")
+  (doseq [ant (my-ants)]
+    (dosync
      (alter moved-to conj ant)))
   
   ; Run each ant

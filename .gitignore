@@ -1,8 +1,9 @@
-pom.xml
-*jar
-/lib/
-/classes/
-.lein-failures
-.lein-deps-sum
+.DS_Store
+Clojure/pom.xml
+Clojure/*jar
+Clojure//lib/
+Clojure//classes/
+Clojure/.lein-failures
+Clojure/.lein-deps-sum
 \#*#
 *.clj~
