@@ -15,7 +15,6 @@
       (if new-pos
         (recur (inc distance) new-pos)
         (do
-          (.println *err* (str distance " " new-pos))
           (add-node loc dir distance)
           pos)))))
 
@@ -23,8 +22,7 @@
   (.println *err* (str depth " " loc " " dir))
   (when (does-node-exist? loc dir)
     (let [next-loc (scan-node-dir loc dir)]
-      (.println *err* (str "Next: "next-loc))
-      (when-not (= depth 1)
+      (when-not (or (= depth 0) (= next-loc loc))
         (scan-node (inc depth) next-loc :north)
         (scan-node (inc depth) next-loc :east)
         (scan-node (inc depth) next-loc :south)
