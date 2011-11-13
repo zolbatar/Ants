@@ -6,10 +6,12 @@
 
 (defn scan-node-dir [loc dir]
   (loop [distance 0 pos loc]
-    (let [new-pos (valid-move? pos dir)]
-      (if new-pos
-        (recur (inc distance) new-pos)
-        distance))))
+    (if (>= distance 20)
+      distance
+      (let [new-pos (valid-move? pos dir)]
+        (if new-pos
+          (recur (inc distance) new-pos)
+          distance)))))
 
 (defn scan-node [node loc]
   (add-node node :north (scan-node-dir loc :north))
@@ -17,11 +19,10 @@
   (add-node node :south (scan-node-dir loc :south))
   (add-node node :west (scan-node-dir loc :west)))
 
-(defn map-out-map []
+(defn map-directions [ant]
   (let [node (atom {})] 
-    (doseq [x (hills)]
-      (scan-node node x))
-    (.println *err* @node)))
+    (scan-node node ant)
+    (last (sort-by second @node))))
     
 
 
