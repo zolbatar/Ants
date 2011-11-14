@@ -6,7 +6,7 @@
 
 (defn scan-node-dir [loc dir]
   (loop [distance 0 pos loc]
-    (if (>= distance 20)
+    (if (>= distance 10)
       distance
       (let [new-pos (valid-move? pos dir)]
         (if new-pos
