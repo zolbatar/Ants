@@ -28,22 +28,20 @@
 (defn score-point-to-point [loc1 loc2]
 ;  (.println *err* (str "Find: " loc1 loc2))
   (loop [score 0 loc loc1]
-;    (.println *err* (str "Position: " loc loc2))
+;    (.println *err* (str "Position: " loc loc2 score))
     (cond
-     (= loc loc2)
-       score
+     (= loc loc2) score
 
-     (> score 20)
-       score
+     (> score 20) score
 
      :else
      (do
        (let [moves (all-moves loc loc2)
              distances (shortest-distances loc2 moves)]
+;         (.println *err* distances)
          (if (= (count distances) 0)
-           (+ score 20)
-           (do
-           (recur (inc score) (first (first (first distances)))))))))))
+           (recur (+ score 20) loc)
+           (recur (inc score) (first (first (first distances))))))))))
           
 (defn measure-distance [ant type]
   (let [distances (sort-by second (map #(list % (score-point-to-point ant %)) type))
@@ -51,7 +49,7 @@
     (if (nil? closest)
       nil
       (do
-        (if (< (second closest) 5)
+        (if (< (second closest) 10)
           closest
           nil)))))
 

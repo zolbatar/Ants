@@ -19,7 +19,12 @@
         nil
         move))))
 
-(defn ant-move [ant ant-state] 
+;(defn min [n1 n2]
+ ; (if (> n1 n2)
+ ;   n2
+ ;   n1))
+
+(defn ant-move [ant] 
   (.println *err* (str "Started moving ant at " ant))
   (let [best-direction (map-directions ant)
         direction (first best-direction)
@@ -29,7 +34,7 @@
       (swap! ants assoc new-position { :state state-idle })
       (do
         (move ant (first best-direction))
-        (swap! ants assoc new-position { :state state-moving :direction direction :distance (* distance 0.8) })
+        (swap! ants assoc new-position { :state state-moving :direction direction :distance (min 5 distance) })
         (swap! ants dissoc ant)))))
 
 (defn ant-continue-move [ant ant-state]
@@ -47,13 +52,13 @@
           (swap! ants assoc new-position { :state state-idle })
           (swap! ants assoc new-position { :state state-moving :direction direction :distance distance-remaining }))))))
 
-(defn ant-move-to [ant ant-state loc]
+(defn ant-move-to [ant loc]
   (.println *err* (str "Seeking ant at " ant " to " loc))
   (let [dir (filter #(my-valid-move? ant %) (direction ant loc))]
     (if (= (count dir) 0)
       (do
         (swap! ants dissoc ant)
-        (swap! ants assoc ant { :state state-idle }))
+        (ant-move ant))
       (do
         (let [move-to (my-valid-move? ant (first dir))]
           (swap! ants dissoc ant)
@@ -75,13 +80,13 @@
        (or (= (:state ant-state) state-new) (= (:state ant-state) state-idle))
        (let [closest-food (measure-distance ant (food))]
          (if (nil? closest-food)
-           (ant-move ant ant-state)
-           (ant-move-to ant ant-state closest-food)))
+           (ant-move ant)
+           (ant-move-to ant closest-food)))
        
        ; Moving?
        (= (:state ant-state) state-moving) (ant-continue-move ant ant-state)
        
        ; Seeking?
-       (= (:state ant-state) state-seeking) (ant-move-to ant ant-state ( :loc ant-state ))))))
+       (= (:state ant-state) state-seeking) (ant-move-to ant ( :loc ant-state ))))))
 
 (start-game ant-loop)
