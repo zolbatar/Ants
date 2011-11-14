@@ -51,7 +51,7 @@
     (if (nil? closest)
       nil
       (do
-        (if (< (second closest) 10)
+        (if (< (second closest) 5)
           closest
           nil)))))
 

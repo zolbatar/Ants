@@ -11,17 +11,25 @@
   (.println *err* (str "New ant at " ant))
   (swap! ants assoc ant { :state state-new }))
 
+(defn my-valid-move? [loc dir]
+  (let [move (valid-move-food? loc dir)]
+    (if (nil? move)
+      nil
+      (if (contains? @ants move)
+        nil
+        move))))
+
 (defn ant-move [ant ant-state] 
   (.println *err* (str "Started moving ant at " ant))
   (let [best-direction (map-directions ant)
         direction (first best-direction)
         distance (second best-direction)
-        new-position (valid-move? ant direction)]
+        new-position (my-valid-move? ant direction)]
     (if (nil? new-position)
       (swap! ants assoc new-position { :state state-idle })
       (do
         (move ant (first best-direction))
-        (swap! ants assoc new-position { :state state-moving :direction direction :distance (* distance 0.5) })
+        (swap! ants assoc new-position { :state state-moving :direction direction :distance (* distance 0.8) })
         (swap! ants dissoc ant)))))
 
 (defn ant-continue-move [ant ant-state]
@@ -29,7 +37,7 @@
   (let [direction (:direction ant-state)
         distance (:distance ant-state)
         distance-remaining (dec distance)
-        new-position (valid-move? ant direction)]
+        new-position (my-valid-move? ant direction)]
     (if (nil? new-position)
       (swap! ants assoc new-position { :state state-idle })
       (do
@@ -41,14 +49,13 @@
 
 (defn ant-move-to [ant ant-state loc]
   (.println *err* (str "Seeking ant at " ant " to " loc))
-  (let [dir (filter #(valid-move-food? ant %) (direction ant loc))]
+  (let [dir (filter #(my-valid-move? ant %) (direction ant loc))]
     (if (= (count dir) 0)
       (do
         (swap! ants dissoc ant)
         (swap! ants assoc ant { :state state-idle }))
       (do
-        (.println *err* (first dir))
-        (let [move-to (valid-move? ant (first dir))]
+        (let [move-to (my-valid-move? ant (first dir))]
           (swap! ants dissoc ant)
           (move ant (first dir))
           (swap! ants assoc move-to { :state state-seeking :loc loc }))))))
